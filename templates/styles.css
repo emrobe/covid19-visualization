@@ -1,0 +1,68 @@
+/* General bokeh CSS */
+.bk-root {
+    background-color: #15191c;
+    border-color: #15191c;
+}
+
+.bk-root .slick-cell.selected {
+    background: #15191c;
+    color:red;
+}
+
+/* Button Radiogroup CSS */
+.bk-active {
+color: black !important;
+background-color: #888484 !important;
+border-color: #36393c !important;
+font-weight: bolder !important
+}
+.bk-root .bk-btn-default {
+color: #FFFFFF;
+background-color: #20262b;
+border-color: #36393c;
+}
+.bk-root .bk-btn-default:hover {
+color: #FFFFFF;
+background-color: #20262b;
+border-color: #36393c;
+}
+
+/* Some slick table hail-mary CCS Some if it works some of it doesnt */
+.bk-cell-index {
+            background-color: #20262b !important;
+            background-image: none !important;
+            color:black !important;
+}
+.slick-header-column.ui-state-default {
+    background:none ;
+    background-color: #20262b;
+    color: #eeeeee;  
+    border: none;  
+    padding: 0;
+    text-shadow: none;
+    font-family: Arial, Verdana, Helvetica, sans-serif;
+    font-size: 13px;
+    height: 40px;
+    line-height: 40px;
+}
+
+.slick-header-column.ui-state-active {
+    background-color: #20262b;
+}
+
+.slick-header-column.ui-state-hover {
+    background-color: #20262b;
+    color: red;
+}
+
+.slick-row.ui-widget-content, .slick-cell {
+    background: none;
+    background-color: #15191c;
+    color: #666666;
+    border: none;
+    border-bottom: solid 100px #15191c;
+    font-size: 14px;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 5px;
+}
