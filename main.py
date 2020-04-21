@@ -39,7 +39,7 @@ stats = format_graph_stats(jhdict)
 # Parse metadata from s1 (local, v1, v1.1 etc. Leave commented for easy trouble shooting)
 #metadataurl = "current.tsv"
 #metadataurl = "https://s1.sfb.uit.no/public/mar/CoronaDB/Metadatabase/SarsCoV2DB.v1/SarsCoV2DB_2020-04-14.tsv"
-metadataurl = "https://s1.sfb.uit.no/public/mar/CoronaDB/Metadatabase/current.tsv"
+metadataurl = "https://s1.sfb.uit.no/public/mar/SarsCoV2DB/Metadatabase/current.tsv"
 
 # Change this to url from s1 when ready
 metadata = pd.read_csv(metadataurl, sep="\t")
