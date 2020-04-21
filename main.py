@@ -36,9 +36,10 @@ world = add_flags(world)
 # Put rest of JH covid data into dict -> dataframe
 stats = format_graph_stats(jhdict)
 
-# Parse metadata from s1 (local for now)
+# Parse metadata from s1 (local, v1, v1.1 etc. Leave commented for easy trouble shooting)
 #metadataurl = "current.tsv"
-metadataurl = "https://s1.sfb.uit.no/public/mar/CoronaDB/Metadatabase/SarsCoV2DB.v1/SarsCoV2DB_2020-04-14.tsv"
+#metadataurl = "https://s1.sfb.uit.no/public/mar/CoronaDB/Metadatabase/SarsCoV2DB.v1/SarsCoV2DB_2020-04-14.tsv"
+metadataurl = "https://s1.sfb.uit.no/public/mar/CoronaDB/Metadatabase/current.tsv"
 
 # Change this to url from s1 when ready
 metadata = pd.read_csv(metadataurl, sep="\t")
@@ -54,19 +55,20 @@ citiesgeosource = GeoJSONDataSource(geojson = cities.to_json())
 def update_radio_buttons(active):
     # Map active list indices to pandas column to be plotted and chosen color
     color_by = {
-            0: ["confirmed", "Oranges"],
-            1: ["recovered", "Greens"],
-            2: ["deaths", "Reds"],
-            3: ["datasets", "Purples"]}
+            0: ["confirmed", "Confirmed Infections", "Oranges"],
+            1: ["recovered", "Confirmed Recoveries", "Greens"],
+            2: ["deaths", "Confirmed Deaths", "Reds"],
+            3: ["datasets", "Datasets", "Purples"]}
 
     view = color_by[active][0]
-    palette = color_by[active][1]
+    infix = color_by[active][1]
+    palette = color_by[active][2]
 
     # Update wmap with selected view and palette
-    dashboard.children[2].children[0] = draw_wmap(view, palette)
+    dashboard.children[2].children[0] = draw_wmap(view, infix, palette)
 
 # Main world map renderer. 
-def draw_wmap(view, palette):
+def draw_wmap(view, infix, palette):
 
     # Define color palettes
     palette = brewer[palette][8]
@@ -82,7 +84,7 @@ def draw_wmap(view, palette):
         color_mapper = LogColorMapper(palette = palette, low = 1, high = max_value)
 
     # Create figure object.
-    titlestring = "Covid19 Confirmed Infections world wide, as of {}. Statistics are updated on a daily basis from the Johns Hopkins Data Repository".format(date)
+    titlestring = "Covid19 {} world wide, as of {}. Statistics are updated on a daily basis from the Johns Hopkins Data Repository".format(infix, date)
     wmap = figure(title = titlestring,
             plot_height = 600,
             plot_width = 1200,
@@ -122,8 +124,8 @@ def update_graph_table(attr, old, new):
     #print(countries)
     
     # Update graph and table with seq data based on selected countries from wmap
-    dashboard.children[3].children[0] = update_graph(countries)
-    dashboard.children[3].children[1] = update_table(countries)
+    dashboard.children[4].children[0] = update_graph(countries)
+    dashboard.children[4].children[1] = update_table(countries)
 
 # Main graph draw function. 
 def update_graph(countries):
@@ -204,8 +206,11 @@ def update_table(countries):
     #return column([dlselbutton, annotation_table])
     return annotation_table
 
-### Header
+### Header html
 header = Div(text=open(join(dirname(__file__), "header.html")).read(), width=1200, sizing_mode="stretch_width")
+
+### Divider html (Below wmap, above graph and table)
+divider = Div(text=open(join(dirname(__file__), "divider.html")).read(), width=1200, sizing_mode="stretch_width")
 
 ### Radiobuttons
 buttons = RadioButtonGroup(
@@ -218,7 +223,8 @@ buttons.on_click(update_radio_buttons)
 dashboard = layout(children=[
     [header],
     [buttons],
-    [draw_wmap("confirmed","Oranges")],
+    [draw_wmap("confirmed", "Confirmed Infections", "Oranges")],
+    [divider],
     [update_graph(['World']), update_table(['World'])]],
     sizing_mode='fixed',
     )
