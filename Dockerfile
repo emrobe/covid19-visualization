@@ -5,7 +5,7 @@ FROM continuumio/miniconda3
 ENV HOME /root
 WORKDIR ${HOME}
 
-RUN apt update
+RUN apt update && \
 #RUN apt install -y curl build-essential
 RUN conda config --add channels conda-forge
 RUN conda config --add channels bioconda
@@ -17,4 +17,4 @@ RUN conda create --name env --file covid19-visualization/dependencies.txt
 RUN echo "source activate env" > ~/.bashrc
 ENV PATH /opt/conda/envs/env/bin:$PATH
 
-CMD ["bokeh", "serve", "covid19-visualization/"]
+ENTRYPOINT ["bokeh", "serve", "covid19-visualization/"]
