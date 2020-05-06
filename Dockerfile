@@ -12,9 +12,11 @@ RUN conda config --add channels conda-forge && \
 #RUN conda create -n env python=3.7 htseq numpy pandas bokeh=1.2
 ENV PATH /opt/conda/envs/env/bin:$PATH
 
-COPY . covid19-visualization
-
-RUN conda create --name env --file covid19-visualization/dependencies.txt && \
+COPY dependencies.txt /tmp/dependencies.txt
+RUN conda create --name env --file /tmp/dependencies.txt && \
+  rm /tmp/dependencies.txt && \
   echo "source activate env" > ~/.bashrc
+
+COPY . covid19-visualization
 
 ENTRYPOINT ["bokeh", "serve", "covid19-visualization/"]
