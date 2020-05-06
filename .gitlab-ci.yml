@@ -1,0 +1,23 @@
+variables:
+  REGISTRY: registry.gitlab.com/uit-sfb/covid19-visualization
+  VERSION: 0.1.0
+  IMAGE_NAME: covid19-visualization
+
+docker build:
+  stage: build
+  tags:
+    - test-server
+    - bash
+  before_script:
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - docker build -t $REGISTRY/$IMAGE_NAME:$VERSION .
+    - docker push $REGISTRY/$IMAGE_NAME:$VERSION
+
+test docker image:
+  stage: test
+  tags:
+    - test-server
+    - bash
+  script:
+    - docker run --rm $REGISTRY/$IMAGE_NAME:$VERSION -h
