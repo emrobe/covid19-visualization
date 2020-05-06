@@ -1,6 +1,6 @@
 variables:
-  REGISTRY: registry.gitlab.com/uit-sfb/covid19-visualization
   VERSION: 0.1.0
+  REGISTRY: registry.gitlab.com/uit-sfb/covid19-visualization
   IMAGE_NAME: covid19-visualization
 
 docker build:
