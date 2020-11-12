@@ -71,6 +71,8 @@ def add_flags(df):
 
 def merge_datasets(world, df, rename_mapper=False, verbose=False):
     '''Returns a merged pandas df from world and latest available datsets from covidDb'''
+    # New GAZ CV hotfix (isolation country now contains: "string § GAZ:XXXXX")
+    df['isolation_country'] = df['isolation_country'].apply(lambda x: x.split(" §")[0])
     # Static rename mapper as of 16.04.2020. Some of the countries from Coviddb are written differently than from Geopandas
     if not rename_mapper:
         rename_mapper = {
