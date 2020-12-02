@@ -15,14 +15,38 @@ from bokeh.palettes import brewer
 from bokeh.themes import built_in_themes
 from bokeh.plotting import figure,output_file, save
 
-# Geopandas stuffs needed for plotting borders++
-world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
+## Sars-Cov-2 DB 
+# API endpoint
+api_endpoint = "https://databasesapi-test.sfb.uit.no"
+api_root = "/rpc/v1/xxl/"
+# When production graph API is updated, uncomment this:
+#api_endpoint = "https://databasesapi.sfb.uit.no/"
+#api_root = "/rpc/v1/SARS-CoV-2/"
+api = urllib.parse.urljoin(api_endpoint, api_root)
 
+# Retrieve data from api
+graph_request = ['x[id]=each','y_country[loc:country]=setR', 'y_genbank[acc:genbank]=setR']
+graph_request = 'graphs?'+"&".join(graph_request)
+metadataurl = urllib.parse.urljoin(api, graph_request)
+metadata = urllib.request.urlopen(metadataurl)
+
+# Transform data and set column names. Lists from <setR> are converted to strings using join, to prevent any index errors.
+metadata = dict(json.loads(metadata.read()))
+metadata = [dict(cdb_id=entry['x'], isolation_country="".join(entry['y_country']), genbank_accession="".join(entry['y_genbank'])) for entry in metadata['graph']]
+metadata = pd.DataFrame.from_dict(metadata)
+
+## Johns Hopkins daily Covid-data
 # Get and parse Johns Hopkins daily Covid-data. Parse todays date from Norway entry (doesn't matter)
 JHcovidurl = "https://pomber.github.io/covid19/timeseries.json"
 jhdict = json.loads(urllib.request.urlopen(JHcovidurl).read())
 date = jhdict['Norway'][-1]['date']
+
+# Application responsiveness
+# Stretch_both goes here
+
+# Geopandas stuffs needed for plotting borders++
+world = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+cities = gpd.read_file(gpd.datasets.get_path('naturalearth_cities'))
 
 # Prune JH dict / Fix syntactic differences between geopandas country-id and JH covid country-id Discard leftovers.
 jhdict = fix_JH_dict(world, jhdict)
@@ -39,10 +63,10 @@ stats = format_graph_stats(jhdict)
 # Parse metadata from s1 (local, v1, v1.1 etc. Leave commented for easy trouble shooting)
 #metadataurl = "current.tsv"
 #metadataurl = "https://s1.sfb.uit.no/public/mar/CoronaDB/Metadatabase/SarsCoV2DB.v1/SarsCoV2DB_2020-04-14.tsv"
-metadataurl = "https://s1.sfb.uit.no/public/mar/SarsCovid19DB/contextual/latest/current.tsv"
+#metadataurl = "https://s1.sfb.uit.no/public/mar/SarsCovid19DB/contextual/latest/current.tsv"
 
 # Change this to url from s1 when ready
-metadata = pd.read_csv(metadataurl, sep="\t")
+#metadata = pd.read_csv(metadataurl, sep="\t")
 
 # Map number of current available datasets to the world df in its own column 'datasets'. Provide a dict with rename_mapper to fix typos in country names
 world = merge_datasets(world, metadata)
